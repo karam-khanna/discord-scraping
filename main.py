@@ -1,3 +1,10 @@
+import os
+
+from dotenv import load_dotenv
+load_dotenv()
+PASSWORD = os.getenv('PASSWORD')
+
+
 # This is a sample Python script.
 
 # Press ⌃R to execute it or replace it with your code.
@@ -13,4 +20,6 @@ def print_hi(name):
 if __name__ == '__main__':
     print_hi('PyCharm')
 
+
+print(PASSWORD)
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
