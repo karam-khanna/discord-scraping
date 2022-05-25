@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import json
 import requests
 import pandas as pd
+import pickle
 
 
 #  -----------------SET UP----------------------
@@ -18,12 +19,12 @@ headers = {
 #  -----------------END-SETUP----------------------
 #  -----------------DEFINE METHODS----------------------
 # goals: get the last thousand messages
-def getMessages(channelID):
+def getMessages(channelID, numRequests):
     # request messages
     df = pd.DataFrame()
     message_dict = {}
 
-    for x in range(100):
+    for x in range(numRequests):
         if (x == 0):
             req = requests.get(f'https://discord.com/api/v9/channels/{channelID}/messages?limit=100', headers=headers)
             message_dict[x] = json.loads(req.text)
@@ -38,10 +39,9 @@ def getMessages(channelID):
             tmp_df = pd.DataFrame(message_dict[x])
             df = pd.concat([df, tmp_df], ignore_index=True)
 
-    # df = pd.DataFrame(columns= ['Content', 'Sender', 'TimeStamp'])
 
-
-    # df = pd.concat([df, df2], ignore_index=True)
+    with open ('pickleArtifact.txt', 'wb') as pickle_artifact:
+        pickle.dump(obj=df, file=pickle_artifact)
     return df
 
 
@@ -49,8 +49,9 @@ def getMessages(channelID):
 #  -----------------END-METHODS----------------------
 
 #  -----------------RUNNING----------------------
-df = getMessages(channelID)
-
+# getMessages(channelID, 500)
+pickle_to_open = open('pickleArtifact.txt', 'rb')
+df = pickle.load(pickle_to_open)
 
 
 print('donzo')
