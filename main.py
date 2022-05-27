@@ -4,6 +4,9 @@ import json
 import requests
 import pandas as pd
 import pickle
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 
 #  -----------------SET UP----------------------
@@ -19,7 +22,7 @@ headers = {
 #  -----------------END-SETUP----------------------
 #  -----------------DEFINE METHODS----------------------
 # goals: get the last thousand messages
-def getMessages(channelID, numRequests):
+def getMessages(channelID, numRequests, preservePickle):
     # request messages
     df = pd.DataFrame()
     message_dict = {}
@@ -39,10 +42,42 @@ def getMessages(channelID, numRequests):
             tmp_df = pd.DataFrame(message_dict[x])
             df = pd.concat([df, tmp_df], ignore_index=True)
 
+    if (preservePickle == True):
+        with open ('pickleArtifact.txt', 'wb') as pickle_artifact:
+            pickle.dump(obj=df, file=pickle_artifact)
+        return df
 
-    with open ('pickleArtifact.txt', 'wb') as pickle_artifact:
-        pickle.dump(obj=df, file=pickle_artifact)
-    return df
+
+def monthly_analysis(df_input, start_year, start_month, start_day, start_hour=0, start_minute=0,
+                     delta_years=0, delta_months=0, delta_weeks=0, delta_days=0, delta_hours=1, delta_minutes=0):
+    print("running monthly analysis")
+
+    start_date = datetime.date(
+        datetime(start_year, start_month, start_day, start_hour, start_minute)
+    )
+
+    delta = relativedelta(years=+delta_years, months=+delta_months, weels=+delta_weeks,
+                          days=+delta_days, hours=+delta_hours, minutes=+delta_minutes)
+
+    end_date = start_date + delta;
+    
+
+    tester = "2022-05-24T14:23:28.770000+00:00"
+    testerDate = datetime.strptime(tester, '%Y-%m-%dT%H:%M:%S.%f%z')
+
+
+    print(testerDate.timestamp())
+    print(testerDate.tzinfo)
+
+    # paramitze start date and interval length, use delta time
+    # delta = relativeDelta(months+=months, weeks+=weeks, days +=days, hours+=hours)
+    #set defaults of zero for all these
+    #end date = startdate + delta
+    # use simple operators to compare
+
+
+
+
 
 
 
@@ -53,6 +88,7 @@ def getMessages(channelID, numRequests):
 pickle_to_open = open('pickleArtifact.txt', 'rb')
 df = pickle.load(pickle_to_open)
 
+monthly_analysis(df, days=0)
 
 print('donzo')
 
